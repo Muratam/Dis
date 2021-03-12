@@ -63,15 +63,21 @@ proc exec(base: seq[int]) =
 
 proc preProcess(code: string) : string =
   result = code
+    .replace("33", "!").replace("42", "*").replace("62", ">")
+    .replace("94", "^").replace("95", "_")
+    .replace("123", "{").replace("124", "|").replace("125", "}")
     .replace("jump", "^").replace("getc","}").replace("putc","{")
     .replace("halt", "!").replace("load","*").replace("ror", ">").replace("sub", "|")
-    .replace("fish", "*__>")
     .replace("\n","").replace(" ","").strip()
   echo result
 
 let cat = fmt"""load jump {"_".repeat(32)} getc putc load jump {"_".repeat(5)} halt {"_".repeat(2)} load"""
-# d = 34,35,36,37,... をメモリとすることで有効活用 # 34  35   36   37   38
-let hello = fmt"""jump halt {"_".repeat(32)}   sub putc halt halt halt {"_".repeat(56)}
+# メモリとコードを同一に置くのはむずすぎるので分ける。
+# d = 34,35,36,37,... をメモリとすることで有効活用(sub putc halt...で初期化). 多分長さ60程度は使用できる
+# d, つまり見ているメモリ番地が毎回+1されるので
+let hello = fmt"""
+jump 33 {"_".repeat(32)}
+124 123 33 33 33 {"_".repeat(56)} (# メモリ)
 *_>_*>|_*_>_*_>_*_>_*_>_*_>_*_>_*_>_*_>_*_>_*>__*|_>*__|*|||*__>*>||*>_|*__>*__>*__>*__>*__>*__>*__>* putc
 _>*>_|*>||*__>*>||*>||*__>*__>*__>*>_|*>||*__>*__>*__>*__>*__>*__>* putc
 __*>||*>_|*__>*__>*>||*>||*__>*>_|*>||*__>*__>*__>*__>*__>*__>*__>* putc putc
