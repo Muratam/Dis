@@ -71,10 +71,11 @@ proc preProcess(code: string) : string =
     .replace("R0", ">__*") # d=34: M[34]をROR
     .replace("R1", "_>_*") # d=34: M[35]をROR
     .replace("R2", "__>*") # d=34: M[36]をROR
-    .replace("F1", ">||*") # 謎1
-    .replace("F2", ">_|*") # 謎2
-    .replace("F3", ">|_*") # 謎3
-    .replace("F4", "__|*") # 謎4
+    .replace("F1", ">||*") # d=34: 謎1
+    .replace("F2", ">_|*") # d=34: 謎2
+    .replace("F3", ">|_*") # d=34: 謎3
+    .replace("F4", "__|*") # d=34: 謎4
+    .replace("P", "{__*")  # d=34: putc(M[34]) (P+R2やPPR2などは結合できるのでたまに結合される)
     .replace("\n","").replace(" ","").strip()
   echo result
 
@@ -85,18 +86,19 @@ let cat = fmt"""load jump {"_".repeat(32)} getc putc load jump {"_".repeat(5)} h
 let hello = fmt"""
 jump 33 {"_".repeat(32)}
 124 123 33 33 33 {"33 ".repeat(56)} load (# メモリ)
-R1 F3 R1 R1 R1 R1 R1 R1 R1 R1 R1 R0 |_>* F4 |||* R2 F1 F2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F2 F1 R2 F1 F1 R2 R2 R2 F2 F1 R2 R2 R2 R2 R2 R2  putc __*
-F1 F2 R2 R2 F1 F1 R2 F2 F1 R2 R2 R2 R2 R2 R2 R2  putc putc >*
-F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F2 F1 R2 F2 F1 R2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F1 F2 >|>* F1 F2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F3 F1 F2 R2 F1 F2 R2 R2 F2 F1 R2 R2 R2 R2 R2 R2  putc __*
-F1 F2 R2 F2 F1 R2 F3 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F3 F1 F1 R2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F3 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 R2  putc _>*
-F4 >F4 >F4 F4 R2 R2 R2 R2 R2 R2 R2 R2 R2 F2 F1  putc _>*
-F4 >F4 >F4  putc _|*
-R2 F1 F1 putc halt"""
+R1 F3 R1 R1 R1 R1 R1 R1 R1 R1 R1 R0 |_>* F4 |||* R2 F1 F2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F2 F1 R2 F1 F1 R2 R2 R2 F2 F1 R2 R2 R2 R2 R2 R2 P
+F1 F2 R2 R2 F1 F1 R2 F2 F1 R2 R2 R2 R2 R2 R2 R2 P
+P
+R2 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F2 F1 R2 F2 F1 R2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F1 F2 >|>* F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F3 F1 F2 R2 F1 F2 R2 R2 F2 F1 R2 R2 R2 R2 R2 R2 P
+F1 F2 R2 F2 F1 R2 F3 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F3 F1 F1 R2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F3 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 R2 P
+R2 F4 >F4 >F4 F4 R2 R2 R2 R2 R2 R2 R2 R2 R2 F2 F1 P
+R2 F4 >F4 >F4 P
+F4 R2 F1 F1 putc halt"""
 let code = hello
 code.preProcess().load().exec()
