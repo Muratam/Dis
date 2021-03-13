@@ -110,7 +110,7 @@ proc tritrot_n(n:int) : string =
 proc tritsub_n(n:int) :string =
   result = nop()
   result[n] = '|'
-# a = a; putc(a)
+# putc(a)
 proc putc_a() : string =
   result = nop()
   result[0] = '{'
@@ -129,17 +129,7 @@ proc cp_n_m(n, m:int): string = clear_n(m) & load_n(n) & tritsub_n(m)
 
 # 48 = 1210
 # 49 = 1211
-# a,bを--のみで以下にしたい
-#   0--b--b--a--a: 00:0 01:1 10:1 11:2
-#   0--b--a: 00:0 01:2 10:2 11:1
-# A,c を--のみで以下にしたい
-# 00:0 01:0 10:0 11:1 20:1 21:1 (000111)もしくは
-# 00:0 01:0 10:1 11:1 20:0 21:1 (001101)
-# for a in [0,1,2]:
-#   for b in [0,1]:
-#     let x = b--a--(a--b)
-#     echo fmt"{a}{b}:{x}"
-# if true: quit ""
+# f(a,b,c) で, 111:1, 222:2 000:0 だと嬉しい
 # M[0]=getc M[1]=getc M[2]=getc getc
 # M[0]=getc--M[0]...
 const prefix = fmt""" jump 33 {"_".repeat(32)} {"33 ".repeat(61)} load"""
@@ -158,7 +148,7 @@ R2 F3 F1 F2 R2 R2 R2 R2 R2 R2 R2 R2 R2 P
 R2 F4 >F4 >F4 F4 R2 R2 R2 R2 R2 R2 R2 R2 R2 F2 F1 P
 R2 F4 >F4 >F4 P
 F4 R2 F1 F1 putc halt"""
-let mine = fmt"""{prefix}
+let loadstore5 = fmt"""{prefix}
 {getc_n(0)} {cp_n_m(0,1)} {load_n(1)} {putc_a()}
 {getc_n(0)} {cp_n_m(0,1)} {load_n(1)} {putc_a()}
 {getc_n(0)} {cp_n_m(0,1)} {load_n(1)} {putc_a()}
@@ -166,5 +156,5 @@ let mine = fmt"""{prefix}
 {getc_n(0)} {cp_n_m(0,1)} {load_n(1)} {putc_a()}
 halt
 """
-let code = mine
+let code = loadstore5
 code.preProcess().load().exec()
